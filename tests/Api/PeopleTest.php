@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Person;
+use App\Models\Group;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,11 +14,14 @@ class PeopleControllerTest extends TestCase
 
     public function testPersonCreated()
     {
+        $group = factory('App\Models\Group')->create();
+
         $expected = [
             'first_name' => 'Sally',
             'last_name' => 'Ride',
             'email_address' => 'sallyride@nasa.gov',
-            'status' => 'archived'
+            'status' => 'archived',
+            'group_id' => $group->id
         ];
         $response = $this->json('POST', '/api/people', $expected);
         $response
@@ -39,6 +43,7 @@ class PeopleControllerTest extends TestCase
                     'last_name',
                     'email_address',
                     'status',
+					'group_id',
                     'created_at',
                     'updated_at'
                 ]
@@ -63,6 +68,21 @@ class PeopleControllerTest extends TestCase
         $response = $this->json('GET', '/api/people/' . $person->id);
         $response->assertStatus(404);
     }
+
+	public function testPeopleInGroupRetrieved()
+	{
+		$group = factory('App\Models\Group')->create();
+
+		// Create some people in the group and some people not in the group
+		$person = factory('App\Models\Person', 4)->create();
+		$person = factory('App\Models\Person', 4)
+					->create(['group_id' => $group->id]);
+
+		$response = $this->json('GET', '/api/people/?group_id=' . $group->id);
+		$response
+			->assertStatus(200)
+			->assertJsonCount(4, 'data');
+	}
 
     public function testPersonUpdated()
     {

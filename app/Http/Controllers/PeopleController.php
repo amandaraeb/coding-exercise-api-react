@@ -7,7 +7,9 @@ use Illuminate\Validation\Rule;
 
 use App\Http\Resources\PeopleCollection;
 use App\Http\Resources\PersonResource;
+use App\Http\Resources\GroupResource;
 use App\Models\Person;
+use App\Models\Group;
 
 class PeopleController extends Controller
 {
@@ -16,9 +18,15 @@ class PeopleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new PeopleCollection(Person::all());
+        $people = Person::all();
+
+        if ($request->has('group_id')){
+            $people = $people->where('group_id', $request->group_id);
+        }
+
+        return new PeopleCollection($people);
     }
 
     /**
