@@ -84,6 +84,18 @@ class PeopleControllerTest extends TestCase
 			->assertJsonCount(4, 'data');
 	}
 
+	public function testActivePeopleRetrieved()
+	{
+		$person = factory('App\Models\Person', 4)->create(['status' => 'archived']);
+		$person = factory('App\Models\Person', 4)->create(['status' => 'active']);
+
+		// Only GET active people; assert only active people are fetched
+		$response = $this->json('GET', '/api/people/?status=active');
+		$response
+			->assertStatus(200)
+			->assertJsonCount(4, 'data');
+	}
+
     public function testPersonUpdated()
     {
         $person = factory('App\Models\Person')->create();

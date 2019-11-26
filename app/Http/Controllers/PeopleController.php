@@ -26,6 +26,10 @@ class PeopleController extends Controller
             $people = $people->where('group_id', $request->group_id);
         }
 
+        if ($request->has('status')){
+            $people = $people->where('status', $request->status);
+        }
+
         return new PeopleCollection($people);
     }
 
