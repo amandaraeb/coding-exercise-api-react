@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,3 +13,4 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('people', 'PeopleController');
+Route::resource('groups', 'GroupsController');
